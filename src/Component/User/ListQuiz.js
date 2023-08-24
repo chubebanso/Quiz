@@ -1,42 +1,44 @@
 import { useEffect, useState } from "react";
 import { getQuizByUser } from "../../services/apiService";
-
+import './ListQuiz.scss'
+import { Navigate, useNavigate } from "react-router-dom";
 const ListQuiz = (props) => {
-    const [arrQuiz, setArrQuiz] = useState([]);
-
+    const navigate = useNavigate();
+    const [arrQuiz, setArrayQuiz] = useState([]);
     useEffect(() => {
         getQuizData();
-    }, []);
-
+    }, [])
     const getQuizData = async () => {
-        try {
-            const res = await getQuizByUser();
-            if (res && res.EM === 0) {
-                setArrQuiz(res.DT);
-            }
-            console.log('res', res);
-        } catch (error) {
-            console.error(error);
+        const res = await getQuizByUser();
+        if (res && res.EC === 0) {
+            setArrayQuiz(res.DT)
         }
-    };
-
+    }
     return (
-        <div className="list-quiz-container">
-            {arrQuiz.length > 0 &&
-                arrQuiz.map((quiz, index) => (
-                    <div className="card" style={{ width: "18rem" }} key={index}>
-                        <img className="card-img-top" src="..." alt="Card image cap" />
-                        <div className="card-body">
-                            <h5 className="card-title">Card title</h5>
-                            <p className="card-text">
-                                Some quick example text to build on the card title and make up the bulk of the card's content.
-                            </p>
-                            <a href="#" className="btn btn-primary">
-                                Go somewhere
-                            </a>
+        <div className="list-quiz-container container">
+            {arrQuiz && arrQuiz.length > 0 &&
+                arrQuiz.map((quiz, index) => {
+                    return (
+                        <div key={`${index}-quiz`} className="card" style={{ width: "18rem" }} >
+                            <img className="card-img-top" src={`data:image/jpeg;base64,${quiz.image}`} alt="Card image cap" />
+                            <div className="card-body">
+                                <h5 className="card-title">Quiz {index + 1}</h5>
+                                <p className="card-text">
+                                    {quiz.description}
+                                </p>
+                                <button className="btn btn-primary" onClick={() => navigate(`/quiz/${quiz.id}`, { state: { quizTitle: quiz.description } })}>
+                                    Start now
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    )
+                })
+            }
+            {arrQuiz && arrQuiz.length === 0 &&
+                <div>
+                    You don't have quiz now
+                </div>
+            }
         </div>
     );
 };

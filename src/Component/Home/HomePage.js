@@ -1,7 +1,9 @@
 import videoHompage from '../../assets/video-homepage.mp4'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom';
 const HomPage = (props) => {
-    // const isAuthenticated = useSelector(state => state.user.isAuthenticated);
+    const isAuthenticated = useSelector(state => state.user.isAuthenticated);
+    const navigate = useNavigate();
     // const account = useSelector(state => state.user.account);
     // console.log('account:', account, 'isAuthenticated:', isAuthenticated);
     return (
@@ -17,8 +19,13 @@ const HomPage = (props) => {
                 <div className='title-2'>Get more data—like signups, feedback, and anything else—with
                     forms designed to be refreshingly different.
                 </div>
-                <div >
-                    <button className='title-3'>Get started—it's free</button>
+                <div  >
+                    {isAuthenticated === false ?
+                        <button className='title-3' onClick={() => navigate("/login")}>Get started—it's free</button>
+                        : <button className='title-3' onClick={() => navigate("/users")}>
+                            Doing quiz now
+                        </button>
+                    }
                 </div>
             </div>
         </div>
