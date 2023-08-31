@@ -1,6 +1,6 @@
 import React from 'react';
 import 'react-pro-sidebar/dist/css/styles.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
     ProSidebar,
     Menu,
@@ -17,6 +17,7 @@ import { MdDashboard } from "react-icons/md"
 import './Sidebar.scss'
 const SideBar = (props) => {
     const { image, collapsed, toggled, handleToggleSidebar } = props
+    const navigate = useNavigate();
     return (
         <>
             <ProSidebar
@@ -40,7 +41,7 @@ const SideBar = (props) => {
                         }}
                     >
                         <DiReact size={'3em'} color={'00bfff'} />
-                        Chubebanso
+                        <span onClick={() => navigate('/')}> Chubebanso</span>
                     </div>
                 </SidebarHeader>
 
@@ -65,7 +66,9 @@ const SideBar = (props) => {
                                 <Link to='/admins/manage-users' />
                             </MenuItem>
 
-                            <MenuItem> Manage Quiz</MenuItem>
+                            <MenuItem> Manage Quiz
+                                <Link to='/admins/manage-quizzes' />
+                            </MenuItem>
                             <MenuItem> Manage Question</MenuItem>
                         </SubMenu>
 

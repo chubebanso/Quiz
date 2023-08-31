@@ -1,10 +1,11 @@
 import { useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom"
-import { getDataQuiz } from "../../services/apiService";
+import { getDataQuiz, postSubmitQuiz } from "../../services/apiService";
 import _, { find } from 'lodash'
 import './DetailQuiz.scss'
 import Question from "./Question";
 import { useState } from "react";
+import ModalResult from "./ModalResult";
 const DetailQuiz = (props) => {
     const params = useParams();
     const location = useLocation();//truoc khi vao trang nay thi tu trang nao truyen toi
@@ -12,6 +13,8 @@ const DetailQuiz = (props) => {
     const quizId = params.id;
     const [dataQuiz, setDataQuiz] = useState("");
     const [index, setIndex] = useState(0);
+    const [isShowModalResult, setShowModalResult] = useState(false)
+    const [dataModal, setDataModal] = useState({});
     useEffect(() => {
         fetchQuestions();
     }, [quizId])
@@ -45,7 +48,6 @@ const DetailQuiz = (props) => {
             setDataQuiz(data)
         }
     }
-    console.log('check data quiz', dataQuiz)
     const handlePrevious = () => {
         if (index - 1 < 0) return;
         setIndex(index - 1)
@@ -73,7 +75,42 @@ const DetailQuiz = (props) => {
             // console.log('b', b)
         }
     }
-
+    const handleFinish = async () => {
+        let payload = {
+            quizId: quizId,
+            answers: []
+        };
+        let answers = [];
+        console.log('check data before', dataQuiz)
+        if (dataQuiz && dataQuiz.length > 0) {
+            dataQuiz.forEach(item => {
+                let questionId = +item.questionId;
+                let userAnswerId = []
+                item.answers.forEach(a => {
+                    if (a.isSelected === true) {
+                        userAnswerId.push(a.id)
+                    }
+                })
+                answers.push({
+                    questionId: +questionId,
+                    userAnswerId: userAnswerId
+                })
+            })
+            payload.answers = answers;
+            let res = await postSubmitQuiz(payload)
+            console.log('check res', res);
+            if (res && res.EC == 0) {
+                setShowModalResult(true)
+                setDataModal({
+                    countCorrect: res.DT.countCorrect,
+                    countTotal: res.DT.countTotal,
+                    quizData: res.DT.quizData
+                })
+            } else {
+                alert('some thing wrongs....')
+            }
+        }
+    }
     return (
         <div className="detail-quiz-container">
             <div className='left-content'>
@@ -94,12 +131,17 @@ const DetailQuiz = (props) => {
                 <div className="footer">
                     <button className="btn btn-secondary" onClick={() => handlePrevious()}>Prev</button>
                     <button className="btn btn-primary" onClick={() => handleNext()}>Next</button>
-                    <button className="btn btn-warning" onClick={() => handleNext()}>Finish</button>
+                    <button className="btn btn-warning" onClick={() => handleFinish()}>Finish</button>
                 </div>
             </div>
             <div className="right-content">
                 count down
             </div>
+            <ModalResult
+                show={isShowModalResult}
+                setShow={setShowModalResult}
+                dataModal={dataModal}
+            />
         </div>
     )
 }
