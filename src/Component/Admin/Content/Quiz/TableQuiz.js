@@ -26,7 +26,7 @@ const TableQuiz = (props) => {
                             <td>
                                 <div style={{ display: 'flex', gap: '15px' }}>
                                     <button className="btn btn-warning" onClick={() => props.handleUpdateQuiz(item)}>Edit</button>
-                                    <button className="btn btn-danger">Delete</button>
+                                    <button className="btn btn-danger " onClick={() => props.handleDeleteQuiz(item)}>Delete</button>
                                 </div>
                             </td>
                         </tr>

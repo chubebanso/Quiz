@@ -8,6 +8,9 @@ import { toast } from 'react-toastify';
 import TableQuiz from './TableQuiz';
 import { Accordion } from 'react-bootstrap';
 import ModalUpdateQuiz from './ModalUpdateQuiz';
+import DeleteQuiz from './DeleteQuiz';
+import QuizQA from './QuizQA';
+import AssignQuiz from './AssignQuiz';
 const options = [
     { value: 'Easy', label: 'Easy' },
     { value: 'Medium', label: 'Medium' },
@@ -21,6 +24,8 @@ const ManageQuiz = (event) => {
     const [dataUpdate, setDataUpdate] = useState({});
     const [showUpdateQuiz, setShowUpdateQuiz] = useState(false);
     const [listQuiz, setListQuiz] = useState([]);
+    const [showDeleteQuiz, setShowDeleteQuiz] = useState(false);
+    const [dataDelete, setDataDelete] = useState()
     useEffect(() => {
         fetchQuiz();
     }, [])
@@ -57,6 +62,10 @@ const ManageQuiz = (event) => {
         setShowUpdateQuiz(true);
         setDataUpdate(quiz);
 
+    }
+    const handleDeleteQuiz = (quiz) => {
+        setShowDeleteQuiz(true);
+        setDataDelete(quiz);
     }
     const resetUpdateData = () => {
         setDataUpdate({});
@@ -107,21 +116,40 @@ const ManageQuiz = (event) => {
                                 </div>
                             </fieldset>
                         </div>
+                        <div className="list-detail">
+                            <TableQuiz
+                                handleUpdateQuiz={handleUpdateQuiz}
+                                handleDeleteQuiz={handleDeleteQuiz}
+                                listQuiz={listQuiz}
+                                fetchQuiz={fetchQuiz}
+                            />
+                        </div>
+                    </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey="1">
+                    <Accordion.Header> Update Q/A</Accordion.Header>
+                    <Accordion.Body>
+                        <QuizQA />
+                    </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey="2">
+                    <Accordion.Header> Assigns to User</Accordion.Header>
+                    <Accordion.Body>
+                        <AssignQuiz />
                     </Accordion.Body>
                 </Accordion.Item>
             </Accordion>
-            <div className="list-detail">
-                <TableQuiz
-                    handleUpdateQuiz={handleUpdateQuiz}
-                    listQuiz={listQuiz}
-                    fetchQuiz={fetchQuiz}
-                />
-            </div>
             <ModalUpdateQuiz
                 show={showUpdateQuiz}
                 setShow={setShowUpdateQuiz}
                 resetUpdateData={resetUpdateData}
                 dataUpdate={dataUpdate}
+                fetchQuiz={fetchQuiz}
+            />
+            <DeleteQuiz
+                show={showDeleteQuiz}
+                setShow={setShowDeleteQuiz}
+                dataDelete={dataDelete}
                 fetchQuiz={fetchQuiz}
             />
         </div>
